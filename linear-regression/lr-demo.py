@@ -1,5 +1,6 @@
 """ Simple Linear Regression in Python """
 from numpy import *
+import matplotlib.pyplot as plt
 
 def compute_error(b, m, points):
     total_error = 0
@@ -7,7 +8,7 @@ def compute_error(b, m, points):
         x = points[i, 0]
         y = points[i, 1]
         total_error += (y - (m*x + b)) ** 2
-    return total_error / float(len(points) * 2)
+    return total_error / float(len(points))
 
 def step_gradient(current_b, current_m, points, learning_rate):
     b_gradient = 0
@@ -16,8 +17,8 @@ def step_gradient(current_b, current_m, points, learning_rate):
     for i in range(len(points)):
         x = points[i, 0]
         y = points[i, 1]
-        b_gradient = -2/N * (y - (current_m*x + current_b))
-        m_gradient = -2/N * x * (y - (current_m * x + current_b))
+        b_gradient += -2/N * (y - (current_m*x + current_b))
+        m_gradient += -2/N * x * (y - (current_m * x + current_b))
     new_b = current_b - learning_rate * b_gradient
     new_m = current_m - learning_rate * m_gradient
     return new_b, new_m
@@ -40,11 +41,20 @@ def run():
     initial_b = 0
     initial_m = 0
     num_iterations = 1000
+
     print("Starting gradient descent at b = {0}, m = {1}, error = {2}".format(initial_b, initial_m, \
                     compute_error(initial_b, initial_m, points)))
     print("Running...")
+    x_values = points[:,0]
+    y_values = points[:,1]
+    plt.scatter(x_values, y_values)
+    plt.plot(x_values, x_values*initial_m + initial_b)
+    plt.show()
     [b, m] = gradient_descent_runner(points, initial_b, initial_m, learning_rate, num_iterations)
     print("After {0} iterations b = {1}, m = {2}, error = {3}".format(num_iterations, b, m, compute_error(b, m, points)))
+    plt.scatter(x_values, y_values)
+    plt.plot(x_values, x_values * m + b)
+    plt.show()
 
 
 if __name__ == "__main__":
